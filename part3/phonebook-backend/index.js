@@ -1,16 +1,18 @@
-const express = require('express')
-const morgan = require('morgan')
-const cors = require('cors')
-const app = express()
+const express = require('express');
+const morgan = require('morgan');
+const cors = require('cors');
+const path = require('path');
 
-app.use(express.json())
-app.use(cors())
+const app = express();
+
+app.use(express.json());
+app.use(cors());
 
 // Custom token to log request body
-morgan.token('body', (req) => JSON.stringify(req.body))
+morgan.token('body', (req) => JSON.stringify(req.body));
 
 // Configure Morgan
-app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'));
 
 let persons = [
   { 
@@ -33,61 +35,69 @@ let persons = [
     name: "Mary Poppendieck", 
     number: "39-23-6423122"
   }
-]
+];
+
+// Serve static files from the 'dist' directory
+app.use(express.static('dist'));
 
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
-})
+  response.json(persons);
+});
 
 app.get('/info', (request, response) => {
   const info = `
     <p>Phonebook has info for ${persons.length} people</p>
     <p>${new Date()}</p>
-  `
-  response.send(info)
-})
+  `;
+  response.send(info);
+});
 
 app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = persons.find(person => person.id === id)
+  const id = request.params.id;
+  const person = persons.find(person => person.id === id);
   
   if (person) {
-    response.json(person)
+    response.json(person);
   } else {
-    response.status(404).end()
+    response.status(404).end();
   }
-})
+});
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  persons = persons.filter(person => person.id !== id)
+  const id = request.params.id;
+  persons = persons.filter(person => person.id !== id);
 
-  response.status(204).end()
-})
+  response.status(204).end();
+});
 
 app.post('/api/persons', (request, response) => {
-  const body = request.body
+  const body = request.body;
 
   if (!body.name || !body.number) {
-    return response.status(400).json({ error: 'name or number missing' })
+    return response.status(400).json({ error: 'name or number missing' });
   }
 
   if (persons.some(person => person.name === body.name)) {
-    return response.status(400).json({ error: 'name must be unique' })
+    return response.status(400).json({ error: 'name must be unique' });
   }
 
   const person = {
     id: String(Math.floor(Math.random() * 1000000)),
     name: body.name,
     number: body.number,
-  }
+  };
 
-  persons = persons.concat(person)
+  persons = persons.concat(person);
 
-  response.json(person)
-})
+  response.json(person);
+});
 
-const PORT = process.env.PORT || 3001
+// Serve the frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+});
+
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
