@@ -12,7 +12,6 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [notification, setNotification] = useState({ message: null, type: null })
 
-  // Fetch initial data from server
   useEffect(() => {
     personService
       .getAll()
@@ -21,7 +20,6 @@ const App = () => {
       })
   }, [])
 
-  // Function to add a new name and number to the phonebook or update an existing one
   const addName = (event) => {
     event.preventDefault()
     const existingPerson = persons.find(entry => entry.name === newName)
@@ -30,7 +28,6 @@ const App = () => {
       if (window.confirm(`${newName} is already in the phonebook. Replace the old number with a new one?`)) {
         const updatedPerson = { ...existingPerson, number: newNumber }
 
-        // 2.15*: Update existing person's number on the backend server
         personService
           .update(existingPerson.id, updatedPerson)
           .then(returnedPerson => {
@@ -50,7 +47,7 @@ const App = () => {
             }, 5000)
           })
       }
-    } else if (newNumber.trim() === '') { // Check if the phone number is empty
+    } else if (newNumber.trim() === '') {
       alert('Please enter a phone number.')
     } else {
       const nameObject = {
@@ -58,7 +55,6 @@ const App = () => {
         number: newNumber
       }
 
-      // 2.12: Save new person to the backend server
       personService
         .create(nameObject)
         .then(returnedPerson => {
@@ -85,7 +81,6 @@ const App = () => {
     setSearchTerm(event.target.value)
   }
 
-  // 2.14: Function to delete a person from the phonebook
   const handleDelete = id => {
     const person = persons.find(p => p.id === id)
     if (window.confirm(`Delete ${person.name}?`)) {
