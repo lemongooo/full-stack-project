@@ -1,0 +1,19 @@
+### Get all persons
+GET http://localhost:3001/api/persons
+Accept: application/json
+
+### Add a new person
+POST http://localhost:3001/api/persons
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "number": "123-456-7890"
+}
+
+### Get a single person by ID
+GET http://localhost:3001/api/persons/66a0f6356537e54eb607563c
+Accept: application/json
+
+### Delete a person by ID
+DELETE http://localhost:3001/api/persons/66a0f6356537e54eb607563c

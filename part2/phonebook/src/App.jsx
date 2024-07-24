@@ -20,54 +20,106 @@ const App = () => {
       })
   }, [])
 
-  const addName = (event) => {
-    event.preventDefault()
-    const existingPerson = persons.find(entry => entry.name === newName)
+  // const addName = (event) => {
+  //   event.preventDefault()
+  //   const existingPerson = persons.find(entry => entry.name === newName)
     
+  //   if (existingPerson) {
+  //     if (window.confirm(`${newName} is already in the phonebook. Replace the old number with a new one?`)) {
+  //       const updatedPerson = { ...existingPerson, number: newNumber }
+
+  //       personService
+  //         .update(existingPerson.id, updatedPerson)
+  //         .then(returnedPerson => {
+  //           setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
+  //           setNewName('')
+  //           setNewNumber('')
+  //           setNotification({ message: `Updated ${returnedPerson.name}`, type: 'success' })
+  //           setTimeout(() => {
+  //             setNotification({ message: null, type: null })
+  //           }, 5000)
+  //         })
+  //         .catch(error => {
+  //           setNotification({ message: `Information of ${existingPerson.name} has already been removed from server`, type: 'error' })
+  //           setPersons(persons.filter(p => p.id !== existingPerson.id))
+  //           setTimeout(() => {
+  //             setNotification({ message: null, type: null })
+  //           }, 5000)
+  //         })
+  //     }
+  //   } else if (newNumber.trim() === '') {
+  //     alert('Please enter a phone number.')
+  //   } else {
+  //     const nameObject = {
+  //       name: newName,
+  //       number: newNumber
+  //     }
+
+  //     personService
+  //       .create(nameObject)
+  //       .then(returnedPerson => {
+  //         setPersons(persons.concat(returnedPerson))
+  //         setNewName('')
+  //         setNewNumber('')
+  //         setNotification({ message: `Added ${returnedPerson.name}`, type: 'success' })
+  //         setTimeout(() => {
+  //           setNotification({ message: null, type: null })
+  //         }, 5000)
+  //       })
+  //   }
+  // }
+  const addName = (event) => {
+    event.preventDefault();
+    const existingPerson = persons.find(entry => entry.name === newName);
+  
     if (existingPerson) {
       if (window.confirm(`${newName} is already in the phonebook. Replace the old number with a new one?`)) {
-        const updatedPerson = { ...existingPerson, number: newNumber }
-
+        const updatedPerson = { ...existingPerson, number: newNumber };
+  
         personService
           .update(existingPerson.id, updatedPerson)
           .then(returnedPerson => {
-            setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson))
-            setNewName('')
-            setNewNumber('')
-            setNotification({ message: `Updated ${returnedPerson.name}`, type: 'success' })
+            setPersons(persons.map(person => person.id !== existingPerson.id ? person : returnedPerson));
+            setNewName('');
+            setNewNumber('');
+            setNotification({ message: `Updated ${returnedPerson.name}`, type: 'success' });
             setTimeout(() => {
-              setNotification({ message: null, type: null })
-            }, 5000)
+              setNotification({ message: null, type: null });
+            }, 5000);
           })
           .catch(error => {
-            setNotification({ message: `Information of ${existingPerson.name} has already been removed from server`, type: 'error' })
-            setPersons(persons.filter(p => p.id !== existingPerson.id))
+            setNotification({ message: error.response.data.error, type: 'error' });
             setTimeout(() => {
-              setNotification({ message: null, type: null })
-            }, 5000)
-          })
+              setNotification({ message: null, type: null });
+            }, 5000);
+          });
       }
-    } else if (newNumber.trim() === '') {
-      alert('Please enter a phone number.')
     } else {
       const nameObject = {
         name: newName,
         number: newNumber
-      }
-
+      };
+  
       personService
         .create(nameObject)
         .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          setNewName('')
-          setNewNumber('')
-          setNotification({ message: `Added ${returnedPerson.name}`, type: 'success' })
+          setPersons(persons.concat(returnedPerson));
+          setNewName('');
+          setNewNumber('');
+          setNotification({ message: `Added ${returnedPerson.name}`, type: 'success' });
           setTimeout(() => {
-            setNotification({ message: null, type: null })
-          }, 5000)
+            setNotification({ message: null, type: null });
+          }, 5000);
         })
+        .catch(error => {
+          setNotification({ message: error.response.data.error, type: 'error' });
+          setTimeout(() => {
+            setNotification({ message: null, type: null });
+          }, 5000);
+        });
     }
-  }
+  };
+  
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
